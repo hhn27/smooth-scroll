@@ -1,5 +1,11 @@
+'use client'
+import { useRef } from 'react'
 import './globals.css'
 import { Inter } from 'next/font/google'
+import "locomotive-scroll/dist/locomotive-scroll.css";
+import { LocomotiveScrollProvider } from "react-locomotive-scroll";
+import ScrollTriggerProxy from '@/components/ScrollTriggerProxy';
+import Home from './page';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -9,9 +15,37 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
+  const containerRef = useRef(null)
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <LocomotiveScrollProvider
+            options={{
+              smooth: true,
+              // ... all available Locomotive Scroll instance options
+              smartphone: {
+                smooth: true,
+              },
+              tablet: {
+                smooth: true,
+              },
+            }}
+            watch={
+              [
+                <Home></Home>
+                //..all the dependencies you want to watch to update the scroll.
+                //  Basicaly, you would want to watch page/location changes
+                //  For exemple, on Next.js you would want to watch properties like `router.asPath` (you may want to add more criterias if the instance should be update on locations with query parameters)
+              ]
+            }
+            containerRef={containerRef}
+          >
+          <main className="App" data-scroll-container ref={containerRef}>
+            <ScrollTriggerProxy></ScrollTriggerProxy>
+            {children}
+          </main>
+        </LocomotiveScrollProvider>
+      </body>
     </html>
   )
 }
